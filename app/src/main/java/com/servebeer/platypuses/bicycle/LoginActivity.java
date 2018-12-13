@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,6 +29,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.OutputStreamWriter;
+import java.net.Authenticator;
+import java.net.CookieManager;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +68,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mLoginView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+//        populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -144,12 +152,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     private boolean isLoginValid(String login) {
         //TODO: Replace this with your own logic
-        return login.contains("@");
+        return true;
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 0;
     }
 
     /**
@@ -255,8 +263,20 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             try {
                 // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+                URL url = new URL("http://10.0.2.2:8080");
+                HttpURLConnection loginConnection = (HttpURLConnection) url.openConnection();
+                CookieManager cookieManager = new CookieManager();
+                loginConnection.setDoOutput(true);
+                loginConnection.setRequestMethod("GET");
+                OutputStreamWriter writer = new OutputStreamWriter(loginConnection.getOutputStream());
+                writer.write("bruh");
+                writer.close();
+                Log.d("QWE", Integer.toString(loginConnection.getResponseCode()));
+
+
+//                Thread.sleep(2000);
+            } catch (Exception e){
+                Log.e("QWE", "e", e);
                 return false;
             }
 
